@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disaster Relief Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <h1>Disaster Relief Management System</h1>
+                <ul>
+                    <li><a th:href="@{/}">Home</a></li>
+                    <li><a th:href="@{/disasters}">Disasters</a></li>
+                    <li><a th:href="@{/donations}">Donations</a></li>
+                    <li><a th:href="@{/users}">Users</a></li>
+                    <li><a th:href="@{/about}">About</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h2>Welcome to Disaster Relief Management System</h2>
+            <p>A comprehensive platform for managing disaster relief operations, coordinating resources, and facilitating donations.</p>
+        </section>
+
+        <section class="features">
+            <div class="feature-card">
+                <h3>Disaster Management</h3>
+                <p>Track and manage disaster events in real-time</p>
+                <a th:href="@{/disasters}" class="btn">View Disasters</a>
+            </div>
+
+            <div class="feature-card">
+                <h3>Donation Management</h3>
+                <p>Accept and manage donations from generous donors</p>
+                <a th:href="@{/donations/new}" class="btn">Make a Donation</a>
+            </div>
+
+            <div class="feature-card">
+                <h3>Resource Allocation</h3>
+                <p>Efficiently allocate resources to relief centers</p>
+                <a th:href="@{/dashboard}" class="btn">Dashboard</a>
+            </div>
+
+            <div class="feature-card">
+                <h3>User Management</h3>
+                <p>Manage volunteers, donors, and staff members</p>
+                <a th:href="@{/users/register}" class="btn">Register</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Disaster Relief Management System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

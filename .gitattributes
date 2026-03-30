@@ -1,0 +1,25 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Java files
+*.java text diff=java
+*.xml text
+*.properties text
+
+# Web files
+*.html text diff=html
+*.css text
+*.js text
+
+# Documentation
+*.md text
+*.txt text
+
+# Binary files
+*.jar binary
+*.class binary
+*.jpeg binary
+*.jpg binary
+*.png binary
+*.gif binary
+*.pdf binary

@@ -1,0 +1,151 @@
+=======================================================================
+DISASTER RELIEF MANAGEMENT SYSTEM - QUICK SETUP GUIDE
+=======================================================================
+
+📋 PREREQUISITES:
+-----------------
+1. Java 17 or higher installed
+2. Maven 3.6+ installed  
+3. MySQL 8.0+ installed and running
+4. IDE (IntelliJ IDEA / Eclipse / VS Code)
+
+🚀 STEP-BY-STEP SETUP:
+----------------------
+
+STEP 1: Setup MySQL Database
+-----------------------------
+1. Open MySQL Command Line or MySQL Workbench
+2. Run these commands:
+
+   CREATE DATABASE disaster_management;
+   
+3. Note your MySQL username and password
+
+STEP 2: Configure Application
+------------------------------
+1. Open: src/main/resources/application.properties
+2. Update these lines with YOUR credentials:
+
+   spring.datasource.username=YOUR_MYSQL_USERNAME
+   spring.datasource.password=YOUR_MYSQL_PASSWORD
+
+STEP 3: Build the Project
+--------------------------
+Open terminal in project directory and run:
+
+   mvn clean install
+
+STEP 4: Run the Application
+----------------------------
+Option A - Using Maven:
+   mvn spring-boot:run
+
+Option B - Using IDE:
+   Run DisasterManagementApplication.java
+
+STEP 5: Access Application
+---------------------------
+Open browser and go to: http://localhost:8080
+
+✅ VERIFICATION:
+----------------
+If setup is successful, you should see:
+- Spring Boot banner in console
+- "Disaster Relief Management System Started!" message
+- Homepage loads at http://localhost:8080
+
+🏗️ MVC ARCHITECTURE IMPLEMENTED:
+---------------------------------
+
+MODEL (Business Logic & Data):
+  ✓ 13 Entity classes (User, Disaster, Donation, etc.)
+  ✓ 9 Enum classes (UserRole, DisasterType, etc.)
+  ✓ 13 Repository interfaces (Spring Data JPA)
+  ✓ 4+ Service classes with implementations
+  
+VIEW (User Interface):
+  ✓ Thymeleaf templates (index.html, users/, disasters/)
+  ✓ Responsive CSS styling
+  ✓ Forms for data entry
+  
+CONTROLLER (Request Handling):
+  ✓ HomeController (/, /dashboard)
+  ✓ UserController (/users/*)
+  ✓ DisasterEventController (/disasters/*)
+  ✓ DonationController (/donations/*)
+  ✓ REST API endpoints (/*/api)
+
+📊 DATABASE TABLES (Auto-created by Hibernate):
+------------------------------------------------
+- users (base user table)
+- administrators, donors, volunteers, relief_staff, authorities
+- disaster_events
+- relief_centers
+- resources, resource_requests, allocations
+- donations
+- reports
+
+🔧 TROUBLESHOOTING:
+-------------------
+
+Problem: "Access denied for user"
+Solution: Check MySQL username/password in application.properties
+
+Problem: "Table doesn't exist"
+Solution: Ensure spring.jpa.hibernate.ddl-auto=update in properties
+
+Problem: Port 8080 already in use
+Solution: Change server.port in application.properties
+
+Problem: Maven dependencies not downloading
+Solution: Check internet connection, run: mvn clean install -U
+
+📚 USEFUL COMMANDS:
+-------------------
+Build:    mvn clean install
+Run:      mvn spring-boot:run
+Test:     mvn test
+Package:  mvn package
+
+🌐 AVAILABLE URLS:
+------------------
+Homepage:        http://localhost:8080/
+Users:           http://localhost:8080/users
+Disasters:       http://localhost:8080/disasters
+Donations:       http://localhost:8080/donations
+Dashboard:       http://localhost:8080/dashboard
+Register:        http://localhost:8080/users/register
+
+API Endpoints:
+User API:        http://localhost:8080/users/api
+Disaster API:    http://localhost:8080/disasters/api
+Donation API:    http://localhost:8080/donations/api
+
+📝 PROJECT STRUCTURE:
+---------------------
+48 Java files created including:
+- 1 Main Application class
+- 13 Entity classes  
+- 9 Enum classes
+- 13 Repository interfaces
+- 8 Service classes
+- 4 Controller classes
+- Multiple HTML templates
+- CSS styling
+
+✨ FEATURES IMPLEMENTED:
+------------------------
+✓ Complete MVC architecture
+✓ MySQL database integration
+✓ Spring Data JPA repositories
+✓ RESTful API endpoints
+✓ Thymeleaf view templates
+✓ User registration & management
+✓ Disaster event tracking
+✓ Donation processing
+✓ Responsive web interface
+✓ Clean, commented code
+
+=======================================================================
+For detailed documentation, see README.md
+=======================================================================

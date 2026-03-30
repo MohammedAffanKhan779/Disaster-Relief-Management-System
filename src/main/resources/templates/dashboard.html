@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Disaster Relief Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <h1>Disaster Relief Management System</h1>
+                <ul>
+                    <li><a th:href="@{/}">Home</a></li>
+                    <li><a th:href="@{/disasters}">Disasters</a></li>
+                    <li><a th:href="@{/donations}">Donations</a></li>
+                    <li><a th:href="@{/users}">Users</a></li>
+                    <li><a th:href="@{/dashboard}" class="active">Dashboard</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>Dashboard</h2>
+        
+        <div class="features">
+            <div class="feature-card">
+                <h3>Active Disasters</h3>
+                <p class="stat-number">0</p>
+                <a th:href="@{/disasters}" class="btn btn-sm">View All</a>
+            </div>
+
+            <div class="feature-card">
+                <h3>Total Donations</h3>
+                <p class="stat-number">₹0</p>
+                <a th:href="@{/donations}" class="btn btn-sm">View All</a>
+            </div>
+
+            <div class="feature-card">
+                <h3>Registered Users</h3>
+                <p class="stat-number">0</p>
+                <a th:href="@{/users}" class="btn btn-sm">View All</a>
+            </div>
+
+            <div class="feature-card">
+                <h3>Relief Centers</h3>
+                <p class="stat-number">0</p>
+                <a href="#" class="btn btn-sm">Manage</a>
+            </div>
+        </div>
+
+        <section style="margin-top: 2rem;">
+            <h3>Quick Actions</h3>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <a th:href="@{/disasters/new}" class="btn btn-primary">Report Disaster</a>
+                <a th:href="@{/donations/new}" class="btn btn-primary">Make Donation</a>
+                <a th:href="@{/users/register}" class="btn btn-primary">Register User</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Disaster Relief Management System</p>
+        </div>
+    </footer>
+</body>
+</html>

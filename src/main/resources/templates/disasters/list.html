@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Disaster Events - Disaster Relief Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <h1>Disaster Relief Management System</h1>
+                <ul>
+                    <li><a th:href="@{/}">Home</a></li>
+                    <li><a th:href="@{/disasters}" class="active">Disasters</a></li>
+                    <li><a th:href="@{/donations}">Donations</a></li>
+                    <li><a th:href="@{/users}">Users</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>Disaster Events</h2>
+        
+        <div class="actions">
+            <a th:href="@{/disasters/new}" class="btn btn-primary">Report New Disaster</a>
+        </div>
+
+        <div th:if="${param.success}" class="alert alert-success">
+            Disaster event created successfully!
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="disaster : ${disasters}">
+                    <td th:text="${disaster.eventId}"></td>
+                    <td th:text="${disaster.type}"></td>
+                    <td th:text="${disaster.location}"></td>
+                    <td th:text="${disaster.severity}"></td>
+                    <td th:text="${disaster.status}"></td>
+                    <td th:text="${disaster.date}"></td>
+                    <td>
+                        <a th:href="@{/disasters/{id}(id=${disaster.eventId})}" class="btn btn-sm">View</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Disaster Relief Management System</p>
+        </div>
+    </footer>
+</body>
+</html>
