@@ -3,10 +3,6 @@ package com.disaster.management.model.entity;
 import com.disaster.management.model.enums.AvailabilityStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 /**
  * MODEL CLASS - Volunteer Entity
@@ -14,10 +10,6 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(name = "volunteers")
-@Data
-@EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
-@AllArgsConstructor
 public class Volunteer extends User {
 
     @NotBlank(message = "Skill set is required")
@@ -27,6 +19,34 @@ public class Volunteer extends User {
     @Enumerated(EnumType.STRING)
     @Column(name = "availability", length = 20)
     private AvailabilityStatus availability;
+
+    // Constructors
+    public Volunteer() {
+        super();
+    }
+
+    public Volunteer(String skillSet, AvailabilityStatus availability) {
+        super();
+        this.skillSet = skillSet;
+        this.availability = availability;
+    }
+
+    // Getters and Setters
+    public String getSkillSet() {
+        return skillSet;
+    }
+
+    public void setSkillSet(String skillSet) {
+        this.skillSet = skillSet;
+    }
+
+    public AvailabilityStatus getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(AvailabilityStatus availability) {
+        this.availability = availability;
+    }
 
     // Business methods specific to Volunteer
     public void updateAvailability(AvailabilityStatus newStatus) {

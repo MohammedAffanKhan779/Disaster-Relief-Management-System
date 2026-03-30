@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make a Donation - Disaster Relief Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-gradient-to-r from-blue-600 to-blue-800 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <span class="text-white font-bold text-xl">Disaster Relief</span>
+                </div>
+                <div class="hidden md:flex space-x-1">
+                    <a th:href="@{/}" class="text-blue-100 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">Home</a>
+                    <a th:href="@{/disasters}" class="text-blue-100 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">Disasters</a>
+                    <a th:href="@{/donations}" class="text-white bg-blue-700 px-4 py-2 rounded-lg font-medium transition-all duration-200">Donations</a>
+                    <a th:href="@{/users}" class="text-blue-100 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">Users</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow py-8">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Page Header -->
+            <div class="mb-8 text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800">Make a Donation</h1>
+                <p class="text-gray-600 mt-1">Your contribution helps those in need</p>
+            </div>
+
+            <!-- Error Alert -->
+            <div th:if="${error}" class="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-center">
+                <svg class="w-5 h-5 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="text-red-700 font-medium" th:text="${error}"></span>
+            </div>
+
+            <!-- Form Card -->
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <form th:action="@{/donations}" th:object="${donation}" method="post" class="space-y-6">
+                    
+                    <!-- Donation Type -->
+                    <div>
+                        <label for="type" class="block text-sm font-semibold text-gray-700 mb-2">Donation Type</label>
+                        <select id="type" th:field="*{type}" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                            <option value="">Select Type</option>
+                            <option th:each="type : ${types}" th:value="${type}" th:text="${type}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Amount -->
+                    <div>
+                        <label for="amount" class="block text-sm font-semibold text-gray-700 mb-2">Amount ($)</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg">$</span>
+                            <input type="number" id="amount" th:field="*{amount}" step="0.01" min="0.01" required placeholder="0.00"
+                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-gray-50 hover:bg-white text-xl font-semibold">
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div>
+                        <label for="paymentMethod" class="block text-sm font-semibold text-gray-700 mb-2">Payment Method</label>
+                        <select id="paymentMethod" th:field="*{paymentMethod}" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                            <option value="">Select Payment Method</option>
+                            <option th:each="method : ${paymentMethods}" th:value="${method}" th:text="${method}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Date -->
+                    <div>
+                        <label for="date" class="block text-sm font-semibold text-gray-700 mb-2">Date</label>
+                        <input type="date" id="date" th:field="*{date}" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Description (Optional)</label>
+                        <textarea id="description" th:field="*{description}" rows="3" placeholder="Add any notes about your donation"
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-gray-50 hover:bg-white resize-none"></textarea>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                        <button type="submit" 
+                                class="flex-1 px-6 py-3 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transform hover:scale-[1.02] transition-all duration-200 shadow-md flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                            Submit Donation
+                        </button>
+                        <a th:href="@{/donations}" 
+                           class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-200 text-center">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2026 Disaster Relief Management System</p>
+        </div>
+    </footer>
+</body>
+</html>

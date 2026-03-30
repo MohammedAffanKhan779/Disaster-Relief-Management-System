@@ -49,11 +49,6 @@ buildNumber.properties
 *.code-workspace
 
 # ===========================
-# DIAGRAMS SOURCE FILES (keep images in docs/)
-# ===========================
-*.drawio
-
-# ===========================
 # OS FILES
 # ===========================
 # Mac
@@ -96,6 +91,9 @@ tmp/
 *.tar.gz
 *.rar
 
+# Except Maven wrapper jar
+!.mvn/wrapper/maven-wrapper.jar
+
 # ===========================
 # SECURITY - Never commit!
 # ===========================
@@ -106,6 +104,8 @@ tmp/
 *.jks
 secrets/
 credentials/
+
+# Keep application.properties template, ignore local overrides
 application-local.properties
 application-dev.properties
 application-prod.properties
@@ -116,3 +116,14 @@ application-prod.properties
 *.db
 *.sqlite
 *.sqlite3
+
+# ===========================
+# COPILOT SESSION FILES (local AI assistant state)
+# ===========================
+.copilot/
+
+# ===========================
+# LOCAL CONFIGURATION (contains sensitive data)
+# ===========================
+# Keep template, ignore actual config with credentials
+src/main/resources/application.properties

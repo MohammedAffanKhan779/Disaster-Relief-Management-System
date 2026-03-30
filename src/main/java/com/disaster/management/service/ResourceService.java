@@ -28,4 +28,30 @@ public interface ResourceService {
     List<Resource> getResourcesByCenter(ReliefCenter center);
     
     List<Resource> getLowStockResources(Integer threshold);
+
+    /**
+     * Increase resource quantity (e.g., from donation)
+     * @param resourceId the resource ID
+     * @param quantity amount to add
+     * @return the updated resource
+     */
+    Resource increaseQuantity(Integer resourceId, Integer quantity);
+
+    /**
+     * Decrease resource quantity (e.g., from allocation)
+     * @param resourceId the resource ID
+     * @param quantity amount to subtract
+     * @return the updated resource
+     * @throws IllegalStateException if insufficient quantity
+     */
+    Resource decreaseQuantity(Integer resourceId, Integer quantity);
+
+    /**
+     * Find or create a resource by name and type at a relief center
+     * @param name resource name
+     * @param type resource type
+     * @param center relief center (optional)
+     * @return existing or new resource
+     */
+    Resource findOrCreateResource(String name, DonationType type, ReliefCenter center);
 }

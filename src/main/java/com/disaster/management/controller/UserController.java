@@ -3,6 +3,7 @@ package com.disaster.management.controller;
 import com.disaster.management.model.entity.User;
 import com.disaster.management.model.enums.UserRole;
 import com.disaster.management.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +25,19 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // Display all users
+    // Display all users (ADMIN only)
     @GetMapping
-    public String getAllUsers(Model model) {
+    public String getAllUsers(Model model, HttpSession session) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return "redirect:/users/login";
+        }
+        if (loggedInUser.getRole() != UserRole.ADMIN) {
+            return "redirect:/dashboard?accessDenied";
+        }
         List<User> users = userService.getAllUsers();
         model.addAttribute("users", users);
+        model.addAttribute("loggedInUser", loggedInUser);
         return "users/list";
     }
 
@@ -45,28 +54,128 @@ public class UserController {
     public String registerUser(@ModelAttribute User user, Model model) {
         if (userService.emailExists(user.getEmail())) {
             model.addAttribute("error", "Email already exists");
+            model.addAttribute("roles", UserRole.values());
             return "users/register";
         }
         userService.saveUser(user);
-        return "redirect:/users?success";
+        return "redirect:/users/login?registered";
     }
 
     // Show login form
     @GetMapping("/login")
-    public String showLoginForm() {
+    public String showLoginForm(HttpSession session) {
+        // If already logged in, redirect to dashboard
+        if (session.getAttribute("loggedInUser") != null) {
+            return "redirect:/dashboard";
+        }
         return "users/login";
     }
 
-    // Authenticate user
+    // Authenticate user and store in session
     @PostMapping("/login")
-    public String loginUser(@RequestParam String email, @RequestParam String password, Model model) {
-        var user = userService.authenticateUser(email, password);
-        if (user.isPresent()) {
-            model.addAttribute("user", user.get());
-            return "redirect:/dashboard";
+    public String loginUser(@RequestParam String email, 
+                            @RequestParam String password, 
+                            Model model,
+                            HttpSession session) {
+        var userOpt = userService.authenticateUser(email, password);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            session.setAttribute("loggedInUser", user);
+            
+            // Role-based dashboard redirect
+            return switch (user.getRole()) {
+                case ADMIN -> "redirect:/dashboard/admin";
+                case DONOR -> "redirect:/dashboard/donor";
+                case VOLUNTEER -> "redirect:/dashboard/volunteer";
+                case RELIEF_STAFF -> "redirect:/dashboard/staff";
+                case AUTHORITY -> "redirect:/dashboard/authority";
+            };
         }
-        model.addAttribute("error", "Invalid credentials");
+        model.addAttribute("error", "Invalid email or password");
         return "users/login";
+    }
+
+    // Logout user
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/users/login?logout";
+    }
+
+    // View user profile (own profile or admin)
+    @GetMapping("/{id}")
+    public String viewUser(@PathVariable Integer id, Model model, HttpSession session) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return "redirect:/users/login";
+        }
+        // Allow viewing own profile or admin can view any
+        if (!loggedInUser.getUserId().equals(id) && loggedInUser.getRole() != UserRole.ADMIN) {
+            return "redirect:/dashboard?accessDenied";
+        }
+        userService.getUserById(id).ifPresent(user -> {
+            model.addAttribute("user", user);
+        });
+        model.addAttribute("loggedInUser", loggedInUser);
+        return "users/view";
+    }
+
+    // Show edit user form (own profile or admin)
+    @GetMapping("/{id}/edit")
+    public String showEditForm(@PathVariable Integer id, Model model, HttpSession session) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return "redirect:/users/login";
+        }
+        // Allow editing own profile or admin can edit any
+        if (!loggedInUser.getUserId().equals(id) && loggedInUser.getRole() != UserRole.ADMIN) {
+            return "redirect:/dashboard?accessDenied";
+        }
+        userService.getUserById(id).ifPresent(user -> {
+            model.addAttribute("user", user);
+            model.addAttribute("roles", UserRole.values());
+        });
+        model.addAttribute("loggedInUser", loggedInUser);
+        return "users/edit";
+    }
+
+    // Update user (own profile or admin)
+    @PostMapping("/{id}")
+    public String updateUser(@PathVariable Integer id, @ModelAttribute User user, HttpSession session) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return "redirect:/users/login";
+        }
+        if (!loggedInUser.getUserId().equals(id) && loggedInUser.getRole() != UserRole.ADMIN) {
+            return "redirect:/dashboard?accessDenied";
+        }
+        user.setUserId(id);
+        userService.updateUser(user);
+        return "redirect:/users/" + id + "?updated";
+    }
+
+    // Delete user (ADMIN only)
+    @PostMapping("/{id}/delete")
+    public String deleteUser(@PathVariable Integer id, HttpSession session) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return "redirect:/users/login";
+        }
+        if (loggedInUser.getRole() != UserRole.ADMIN) {
+            return "redirect:/dashboard?accessDenied";
+        }
+        userService.deleteUser(id);
+        return "redirect:/users?deleted";
+    }
+
+    // View current user's profile
+    @GetMapping("/profile")
+    public String viewProfile(HttpSession session) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return "redirect:/users/login";
+        }
+        return "redirect:/users/" + loggedInUser.getUserId();
     }
 
     // REST API Endpoints

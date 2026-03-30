@@ -2,65 +2,117 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Registration - Disaster Relief Management</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <header>
-        <nav>
-            <div class="container">
-                <h1>Disaster Relief Management System</h1>
-                <ul>
-                    <li><a th:href="@{/}">Home</a></li>
-                    <li><a th:href="@{/users}" class="active">Users</a></li>
-                </ul>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-gradient-to-r from-blue-600 to-blue-800 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <span class="text-white font-bold text-xl">Disaster Relief</span>
+                </div>
+                <div class="hidden md:flex space-x-1">
+                    <a th:href="@{/}" class="text-blue-100 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">Home</a>
+                    <a th:href="@{/users}" class="text-white bg-blue-700 px-4 py-2 rounded-lg font-medium transition-all duration-200">Users</a>
+                </div>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
-    <main class="container">
-        <h2>User Registration</h2>
-
-        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
-
-        <form th:action="@{/users/register}" th:object="${user}" method="post" class="form">
-            <div class="form-group">
-                <label for="name">Full Name:</label>
-                <input type="text" id="name" th:field="*{name}" required>
-            </div>
-
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" th:field="*{email}" required>
-            </div>
-
-            <div class="form-group">
-                <label for="phone">Phone:</label>
-                <input type="text" id="phone" th:field="*{phone}" required>
+    <main class="flex-grow py-8">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Page Header -->
+            <div class="mb-8 text-center">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800">User Registration</h1>
+                <p class="text-gray-600 mt-1">Create a new account to join the platform</p>
             </div>
 
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" th:field="*{password}" required>
+            <!-- Error Alert -->
+            <div th:if="${error}" class="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-center">
+                <svg class="w-5 h-5 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="text-red-700 font-medium" th:text="${error}"></span>
             </div>
 
-            <div class="form-group">
-                <label for="role">Role:</label>
-                <select id="role" th:field="*{role}" required>
-                    <option value="">Select Role</option>
-                    <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
-                </select>
-            </div>
+            <!-- Form Card -->
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <form th:action="@{/users/register}" th:object="${user}" method="post" class="space-y-6">
+                    
+                    <!-- Full Name -->
+                    <div>
+                        <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                        <input type="text" id="name" th:field="*{name}" required placeholder="Enter your full name"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                    </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Register</button>
-                <a th:href="@{/users}" class="btn btn-secondary">Cancel</a>
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                        <input type="email" id="email" th:field="*{email}" required placeholder="Enter your email address"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">Phone</label>
+                        <input type="text" id="phone" th:field="*{phone}" required placeholder="Enter your phone number"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                        <input type="password" id="password" th:field="*{password}" required placeholder="Create a password"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                    </div>
+
+                    <!-- Role -->
+                    <div>
+                        <label for="role" class="block text-sm font-semibold text-gray-700 mb-2">Role</label>
+                        <select id="role" th:field="*{role}" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                            <option value="">Select Role</option>
+                            <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                        <button type="submit" 
+                                class="flex-1 px-6 py-3 bg-purple-500 text-white font-semibold rounded-xl hover:bg-purple-600 transform hover:scale-[1.02] transition-all duration-200 shadow-md flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                            </svg>
+                            Register
+                        </button>
+                        <a th:href="@{/users}" 
+                           class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-200 text-center">Cancel</a>
+                    </div>
+
+                    <!-- Login Link -->
+                    <div class="text-center pt-4 border-t border-gray-100">
+                        <p class="text-gray-600">Already have an account? <a th:href="@{/users/login}" class="text-purple-500 font-medium hover:text-purple-600">Login here</a></p>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </main>
 
-    <footer>
-        <div class="container">
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <p>&copy; 2026 Disaster Relief Management System</p>
         </div>
     </footer>

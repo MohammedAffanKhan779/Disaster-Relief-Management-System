@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Report - Disaster Relief Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-gradient-to-r from-blue-600 to-blue-800 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <span class="text-white font-bold text-xl">Disaster Relief</span>
+                </div>
+                <div class="hidden md:flex space-x-1">
+                    <a th:href="@{/}" class="text-blue-100 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">Home</a>
+                    <a th:href="@{/reports}" class="text-white bg-blue-700 px-4 py-2 rounded-lg font-medium transition-all duration-200">Reports</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow py-8">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">Generate Report</h1>
+                <p class="text-gray-600 mt-1">Select report type and parameters</p>
+            </div>
+
+            <!-- Error Alert -->
+            <div th:if="${param.error}" class="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-center">
+                <svg class="w-5 h-5 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="text-red-700 font-medium" th:text="${param.error}">Error message</span>
+            </div>
+
+            <!-- Form Card -->
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <form th:action="@{/reports}" method="post" class="space-y-6">
+                    
+                    <!-- Report Type -->
+                    <div>
+                        <label for="reportType" class="block text-sm font-semibold text-gray-700 mb-2">Report Type</label>
+                        <select id="reportType" name="reportType" required onchange="toggleFields()"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                            <option value="">Select Report Type</option>
+                            <option th:each="type : ${reportTypes}" th:value="${type}" th:text="${type}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Disaster Selection (for DISASTER_SUMMARY) -->
+                    <div id="disasterField" class="hidden">
+                        <label for="disasterId" class="block text-sm font-semibold text-gray-700 mb-2">Disaster Event</label>
+                        <select id="disasterId" name="disasterId"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                            <option value="">Select Disaster Event</option>
+                            <option th:each="disaster : ${disasters}" th:value="${disaster.eventId}" 
+                                    th:text="${disaster.type + ' - ' + disaster.location + ' (' + disaster.date + ')'}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Date Range (for other report types) -->
+                    <div id="dateRangeFields" class="hidden">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="startDate" class="block text-sm font-semibold text-gray-700 mb-2">Start Date</label>
+                                <input type="date" id="startDate" name="startDate"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                            </div>
+                            <div>
+                                <label for="endDate" class="block text-sm font-semibold text-gray-700 mb-2">End Date</label>
+                                <input type="date" id="endDate" name="endDate"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">Leave empty for default (last 30 days)</p>
+                    </div>
+
+                    <!-- Report Type Descriptions -->
+                    <div class="p-4 bg-gray-50 rounded-xl">
+                        <h4 class="text-sm font-semibold text-gray-700 mb-3">Report Types:</h4>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li><strong>SYSTEM_SUMMARY:</strong> Overall system statistics (disasters, centers, resources, allocations)</li>
+                            <li><strong>DISASTER_SUMMARY:</strong> Detailed report for a specific disaster event</li>
+                            <li><strong>DONATION_SUMMARY:</strong> Donation statistics and breakdown by type</li>
+                            <li><strong>ALLOCATION_SUMMARY:</strong> Resource allocation tracking and status</li>
+                        </ul>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                        <button type="submit" 
+                                class="flex-1 px-6 py-3 bg-purple-500 text-white font-semibold rounded-xl hover:bg-purple-600 transform hover:scale-[1.02] transition-all duration-200 shadow-md">
+                            Generate Report
+                        </button>
+                        <a th:href="@{/reports}" 
+                           class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-200 text-center">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2026 Disaster Relief Management System</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFields() {
+            const reportType = document.getElementById('reportType').value;
+            const disasterField = document.getElementById('disasterField');
+            const dateRangeFields = document.getElementById('dateRangeFields');
+            
+            if (reportType === 'DISASTER_SUMMARY') {
+                disasterField.classList.remove('hidden');
+                dateRangeFields.classList.add('hidden');
+            } else if (reportType !== '') {
+                disasterField.classList.add('hidden');
+                dateRangeFields.classList.remove('hidden');
+            } else {
+                disasterField.classList.add('hidden');
+                dateRangeFields.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

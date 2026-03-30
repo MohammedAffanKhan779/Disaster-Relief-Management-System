@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allocations - Disaster Relief Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-gradient-to-r from-blue-600 to-blue-800 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <span class="text-white font-bold text-xl">Disaster Relief</span>
+                </div>
+                <div class="hidden md:flex space-x-1">
+                    <a th:href="@{/}" class="text-blue-100 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">Home</a>
+                    <a th:href="@{/disasters}" class="text-blue-100 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">Disasters</a>
+                    <a th:href="@{/resource-requests}" class="text-blue-100 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">Requests</a>
+                    <a th:href="@{/allocations}" class="text-white bg-blue-700 px-4 py-2 rounded-lg font-medium transition-all duration-200">Allocations</a>
+                    <a th:href="@{/reports}" class="text-blue-100 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">Reports</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Page Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Resource Allocations</h1>
+                    <p class="text-gray-600 mt-1">Track resource distribution to relief centers</p>
+                </div>
+                <a th:href="@{/allocations/new}" class="mt-4 sm:mt-0 inline-flex items-center px-6 py-3 bg-teal-500 text-white font-medium rounded-xl hover:bg-teal-600 transform hover:scale-105 transition-all duration-200 shadow-md">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    New Allocation
+                </a>
+            </div>
+
+            <!-- Status Filter -->
+            <div class="mb-6 flex flex-wrap gap-2">
+                <a th:href="@{/allocations}" 
+                   th:class="${currentStatus == null} ? 'px-4 py-2 rounded-full bg-teal-500 text-white font-medium' : 'px-4 py-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300'">
+                    All
+                </a>
+                <a th:each="status : ${statuses}" 
+                   th:href="@{/allocations(status=${status.name()})}"
+                   th:class="${currentStatus != null && currentStatus == status.name()} ? 'px-4 py-2 rounded-full bg-teal-500 text-white font-medium' : 'px-4 py-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300'"
+                   th:text="${status.name()}">STATUS</a>
+            </div>
+
+            <!-- Alerts -->
+            <div th:if="${param.success}" class="mb-6 bg-green-50 border border-green-200 rounded-xl p-4 flex items-center">
+                <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="text-green-700 font-medium">Allocation created successfully!</span>
+            </div>
+            <div th:if="${param.deleted}" class="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-center">
+                <svg class="w-5 h-5 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+                <span class="text-red-700 font-medium">Allocation deleted successfully!</span>
+            </div>
+
+            <!-- Allocations Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div th:each="allocation : ${allocations}" class="bg-white rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                    <div class="bg-gradient-to-r from-teal-500 to-teal-600 p-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-white text-sm font-medium">Allocation #<span th:text="${allocation.allocationId}"></span></span>
+                            <div th:switch="${allocation.status}">
+                                <span th:case="'SCHEDULED'" class="px-3 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-700">SCHEDULED</span>
+                                <span th:case="'IN_TRANSIT'" class="px-3 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-700">IN TRANSIT</span>
+                                <span th:case="'DELIVERED'" class="px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-700">DELIVERED</span>
+                                <span th:case="'CANCELLED'" class="px-3 py-1 text-xs font-bold rounded-full bg-red-100 text-red-700">CANCELLED</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2" th:text="${allocation.resource?.name ?: 'Unknown Resource'}"></h3>
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center text-gray-600">
+                                <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"></path>
+                                </svg>
+                                <span>To: <strong th:text="${allocation.reliefCenter?.name ?: 'N/A'}"></strong></span>
+                            </div>
+                            <div class="flex items-center text-gray-600">
+                                <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+                                </svg>
+                                <span>Quantity: <strong th:text="${allocation.allocatedQuantity}"></strong></span>
+                            </div>
+                            <div class="flex items-center text-gray-600">
+                                <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span th:text="${allocation.allocationDate}"></span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end pt-4 border-t border-gray-100">
+                            <a th:href="@{/allocations/{id}(id=${allocation.allocationId})}" class="inline-flex items-center text-teal-500 font-medium hover:text-teal-600 transition-colors">
+                                View Details
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(allocations)}" class="text-center py-16">
+                <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">No allocations found</h3>
+                <p class="text-gray-500 mb-4">Allocations are created when resource requests are approved.</p>
+                <a th:href="@{/resource-requests}" class="inline-flex items-center px-6 py-3 bg-teal-500 text-white font-medium rounded-xl hover:bg-teal-600 transition-colors">
+                    View Requests
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2026 Disaster Relief Management System</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -2,65 +2,133 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Disaster Events - Disaster Relief Management</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <header>
-        <nav>
-            <div class="container">
-                <h1>Disaster Relief Management System</h1>
-                <ul>
-                    <li><a th:href="@{/}">Home</a></li>
-                    <li><a th:href="@{/disasters}" class="active">Disasters</a></li>
-                    <li><a th:href="@{/donations}">Donations</a></li>
-                    <li><a th:href="@{/users}">Users</a></li>
-                </ul>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-gradient-to-r from-blue-600 to-blue-800 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <span class="text-white font-bold text-xl">Disaster Relief</span>
+                </div>
+                <div class="hidden md:flex space-x-1">
+                    <a th:href="@{/}" class="text-blue-100 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">Home</a>
+                    <a th:href="@{/disasters}" class="text-white bg-blue-700 px-4 py-2 rounded-lg font-medium transition-all duration-200">Disasters</a>
+                    <a th:href="@{/donations}" class="text-blue-100 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">Donations</a>
+                    <a th:href="@{/relief-centers}" class="text-blue-100 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">Relief Centers</a>
+                    <a th:href="@{/users}" class="text-blue-100 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">Users</a>
+                </div>
             </div>
-        </nav>
-    </header>
-
-    <main class="container">
-        <h2>Disaster Events</h2>
-        
-        <div class="actions">
-            <a th:href="@{/disasters/new}" class="btn btn-primary">Report New Disaster</a>
         </div>
+    </nav>
 
-        <div th:if="${param.success}" class="alert alert-success">
-            Disaster event created successfully!
+    <main class="flex-grow py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Page Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Disaster Events</h1>
+                    <p class="text-gray-600 mt-1">Monitor and manage disaster incidents</p>
+                </div>
+                <a th:href="@{/disasters/new}" class="mt-4 sm:mt-0 inline-flex items-center px-6 py-3 bg-red-500 text-white font-medium rounded-xl hover:bg-red-600 transform hover:scale-105 transition-all duration-200 shadow-md">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Report New Disaster
+                </a>
+            </div>
+
+            <!-- Success Alert -->
+            <div th:if="${param.success}" class="mb-6 bg-green-50 border border-green-200 rounded-xl p-4 flex items-center">
+                <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="text-green-700 font-medium">Disaster event created successfully!</span>
+            </div>
+
+            <!-- Disasters Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div th:each="disaster : ${disasters}" class="bg-white rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm text-gray-500 font-medium">ID: <span th:text="${disaster.eventId}"></span></span>
+                            <!-- Severity Badge -->
+                            <span th:switch="${disaster.severity?.name()}">
+                                <span th:case="'CRITICAL'" class="px-3 py-1 text-xs font-bold rounded-full bg-red-100 text-red-700">CRITICAL</span>
+                                <span th:case="'HIGH'" class="px-3 py-1 text-xs font-bold rounded-full bg-orange-100 text-orange-700">HIGH</span>
+                                <span th:case="'MEDIUM'" class="px-3 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-700">MEDIUM</span>
+                                <span th:case="'LOW'" class="px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-700">LOW</span>
+                                <span th:case="*" class="px-3 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-700" th:text="${disaster.severity}"></span>
+                            </span>
+                        </div>
+                        
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                                <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800" th:text="${disaster.type}"></h3>
+                        </div>
+
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center text-gray-600">
+                                <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                <span th:text="${disaster.location}"></span>
+                            </div>
+                            <div class="flex items-center text-gray-600">
+                                <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span th:text="${disaster.date}"></span>
+                            </div>
+                        </div>
+
+                        <!-- Status Badge -->
+                        <div class="flex items-center justify-between">
+                            <span th:switch="${disaster.status?.name()}">
+                                <span th:case="'ACTIVE'" class="px-3 py-1 text-xs font-semibold rounded-full bg-red-500 text-white">● ACTIVE</span>
+                                <span th:case="'RESOLVED'" class="px-3 py-1 text-xs font-semibold rounded-full bg-green-500 text-white">✓ RESOLVED</span>
+                                <span th:case="'PENDING'" class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-500 text-white">◐ PENDING</span>
+                                <span th:case="*" class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-500 text-white" th:text="${disaster.status}"></span>
+                            </span>
+                            <a th:href="@{/disasters/{id}(id=${disaster.eventId})}" class="inline-flex items-center text-blue-500 font-medium hover:text-blue-600 transition-colors">
+                                View Details
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(disasters)}" class="text-center py-16">
+                <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">No disasters reported</h3>
+                <p class="text-gray-500 mb-4">There are currently no disaster events in the system.</p>
+                <a th:href="@{/disasters/new}" class="inline-flex items-center px-6 py-3 bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors">
+                    Report First Disaster
+                </a>
+            </div>
         </div>
-
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Type</th>
-                    <th>Location</th>
-                    <th>Severity</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="disaster : ${disasters}">
-                    <td th:text="${disaster.eventId}"></td>
-                    <td th:text="${disaster.type}"></td>
-                    <td th:text="${disaster.location}"></td>
-                    <td th:text="${disaster.severity}"></td>
-                    <td th:text="${disaster.status}"></td>
-                    <td th:text="${disaster.date}"></td>
-                    <td>
-                        <a th:href="@{/disasters/{id}(id=${disaster.eventId})}" class="btn btn-sm">View</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
     </main>
 
-    <footer>
-        <div class="container">
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <p>&copy; 2026 Disaster Relief Management System</p>
         </div>
     </footer>

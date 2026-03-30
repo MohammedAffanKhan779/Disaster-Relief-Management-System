@@ -1,11 +1,9 @@
 package com.disaster.management.model.entity;
 
 import com.disaster.management.model.enums.RequestStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -15,9 +13,6 @@ import java.time.LocalDate;
  */
 @Entity
 @Table(name = "resource_requests")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ResourceRequest {
 
     @Id
@@ -42,12 +37,109 @@ public class ResourceRequest {
     @JoinColumn(name = "resource_id", nullable = false)
     private Resource resource;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approved_by")
+    private Administrator approvedBy;
+
+    @OneToOne(mappedBy = "resourceRequest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Allocation allocation;
+
     @NotNull(message = "Requested quantity is required")
     @Column(name = "requested_quantity", nullable = false)
     private Integer requestedQuantity;
 
     @Column(length = 500)
     private String description;
+
+    // Constructors
+    public ResourceRequest() {
+    }
+
+    public ResourceRequest(Integer requestId, LocalDate requestDate, RequestStatus status,
+                           ReliefCenter reliefCenter, Resource resource, Integer requestedQuantity,
+                           String description) {
+        this.requestId = requestId;
+        this.requestDate = requestDate;
+        this.status = status;
+        this.reliefCenter = reliefCenter;
+        this.resource = resource;
+        this.requestedQuantity = requestedQuantity;
+        this.description = description;
+    }
+
+    // Getters and Setters
+    public Integer getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(Integer requestId) {
+        this.requestId = requestId;
+    }
+
+    public LocalDate getRequestDate() {
+        return requestDate;
+    }
+
+    public void setRequestDate(LocalDate requestDate) {
+        this.requestDate = requestDate;
+    }
+
+    public RequestStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(RequestStatus status) {
+        this.status = status;
+    }
+
+    public ReliefCenter getReliefCenter() {
+        return reliefCenter;
+    }
+
+    public void setReliefCenter(ReliefCenter reliefCenter) {
+        this.reliefCenter = reliefCenter;
+    }
+
+    public Resource getResource() {
+        return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
+    }
+
+    public Administrator getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(Administrator approvedBy) {
+        this.approvedBy = approvedBy;
+    }
+
+    public Allocation getAllocation() {
+        return allocation;
+    }
+
+    public void setAllocation(Allocation allocation) {
+        this.allocation = allocation;
+    }
+
+    public Integer getRequestedQuantity() {
+        return requestedQuantity;
+    }
+
+    public void setRequestedQuantity(Integer requestedQuantity) {
+        this.requestedQuantity = requestedQuantity;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     // Business methods
     public void submitRequest() {

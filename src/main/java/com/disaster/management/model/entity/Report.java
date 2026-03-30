@@ -3,9 +3,6 @@ package com.disaster.management.model.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -15,9 +12,6 @@ import java.time.LocalDate;
  */
 @Entity
 @Table(name = "reports")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Report {
 
     @Id
@@ -47,6 +41,78 @@ public class Report {
 
     @Column(name = "file_path", length = 500)
     private String filePath;
+
+    // Constructors
+    public Report() {
+    }
+
+    public Report(Integer reportId, String reportType, LocalDate generatedDate, DisasterEvent disasterEvent,
+                  User generatedBy, String content, String filePath) {
+        this.reportId = reportId;
+        this.reportType = reportType;
+        this.generatedDate = generatedDate;
+        this.disasterEvent = disasterEvent;
+        this.generatedBy = generatedBy;
+        this.content = content;
+        this.filePath = filePath;
+    }
+
+    // Getters and Setters
+    public Integer getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(Integer reportId) {
+        this.reportId = reportId;
+    }
+
+    public String getReportType() {
+        return reportType;
+    }
+
+    public void setReportType(String reportType) {
+        this.reportType = reportType;
+    }
+
+    public LocalDate getGeneratedDate() {
+        return generatedDate;
+    }
+
+    public void setGeneratedDate(LocalDate generatedDate) {
+        this.generatedDate = generatedDate;
+    }
+
+    public DisasterEvent getDisasterEvent() {
+        return disasterEvent;
+    }
+
+    public void setDisasterEvent(DisasterEvent disasterEvent) {
+        this.disasterEvent = disasterEvent;
+    }
+
+    public User getGeneratedBy() {
+        return generatedBy;
+    }
+
+    public void setGeneratedBy(User generatedBy) {
+        this.generatedBy = generatedBy;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
 
     // Business methods
     public void generateReport() {

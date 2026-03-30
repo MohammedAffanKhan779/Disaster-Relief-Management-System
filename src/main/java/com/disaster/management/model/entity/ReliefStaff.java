@@ -1,10 +1,6 @@
 package com.disaster.management.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 /**
  * MODEL CLASS - ReliefStaff Entity
@@ -12,10 +8,6 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(name = "relief_staff")
-@Data
-@EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
-@AllArgsConstructor
 public class ReliefStaff extends User {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -24,6 +16,34 @@ public class ReliefStaff extends User {
 
     @Column(length = 100)
     private String designation;
+
+    // Constructors
+    public ReliefStaff() {
+        super();
+    }
+
+    public ReliefStaff(ReliefCenter reliefCenter, String designation) {
+        super();
+        this.reliefCenter = reliefCenter;
+        this.designation = designation;
+    }
+
+    // Getters and Setters
+    public ReliefCenter getReliefCenter() {
+        return reliefCenter;
+    }
+
+    public void setReliefCenter(ReliefCenter reliefCenter) {
+        this.reliefCenter = reliefCenter;
+    }
+
+    public String getDesignation() {
+        return designation;
+    }
+
+    public void setDesignation(String designation) {
+        this.designation = designation;
+    }
 
     // Business methods specific to ReliefStaff
     public void requestResources() {

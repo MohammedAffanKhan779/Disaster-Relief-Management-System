@@ -61,13 +61,21 @@ Create a MySQL database:
 CREATE DATABASE disaster_management;
 ```
 
-Update `src/main/resources/application.properties` with your MySQL credentials:
+Copy the template configuration file and update with your MySQL credentials:
+
+```bash
+cd src/main/resources/
+cp application.properties.template application.properties
+```
+
+Then edit `application.properties` with your database credentials:
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/disaster_management?createDatabaseIfNotExist=true
 spring.datasource.username=YOUR_MYSQL_USERNAME
 spring.datasource.password=YOUR_MYSQL_PASSWORD
 ```
+
+**⚠️ Security Note**: `application.properties` is git-ignored to protect your credentials. Never commit it to GitHub!
 
 ### 3. Build the Project
 
@@ -87,7 +95,36 @@ Or run the main class `DisasterManagementApplication.java` from your IDE.
 
 Open your browser and navigate to:
 - **Homepage**: http://localhost:8080
-- **API Documentation**: http://localhost:8080/users/api
+- **Login**: http://localhost:8080/users/login
+
+### 🎲 Database Seeding (Automatic)
+
+The application **automatically seeds** test data on first run! Check `DATABASE_SEED_SUMMARY.md` for:
+- ✅ 13 pre-created users (all roles)
+- ✅ 4 disaster events
+- ✅ 4 relief centers
+- ✅ 12 resources
+- ✅ 5 donations
+- ✅ 4 resource requests
+- ✅ Complete relationship linkage
+
+**Test Credentials** (see DATABASE_SEED_SUMMARY.md for full list):
+```
+Admin:          admin@disaster.org / admin123
+Donor:          john.smith@email.com / donor123
+Volunteer:      sarah.wilson@email.com / volunteer123
+Relief Staff:   mike.johnson@relief.org / staff123
+Authority:      authority@gov.in / authority123
+```
+
+### 🎨 Role-Based Dashboards
+
+Each user role sees a **different dashboard** with role-specific features:
+- **Admin**: Manage users, approve requests, allocate resources, generate reports
+- **Donor**: View disasters, make donations, track donation history
+- **Volunteer**: Find opportunities, view assigned tasks, update availability
+- **Relief Staff**: Request resources, update inventory, track distributions
+- **Authority**: View reports, monitor system overview
 
 ## 📁 Project Structure
 
