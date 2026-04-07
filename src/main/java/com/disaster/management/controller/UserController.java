@@ -73,15 +73,15 @@ public class UserController {
 
     // Authenticate user and store in session
     @PostMapping("/login")
-    public String loginUser(@RequestParam String email, 
-                            @RequestParam String password, 
+    public String loginUser(@RequestParam String email,
+                            @RequestParam String password,
                             Model model,
                             HttpSession session) {
         var userOpt = userService.authenticateUser(email, password);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             session.setAttribute("loggedInUser", user);
-            
+
             // Role-based dashboard redirect
             return switch (user.getRole()) {
                 case ADMIN -> "redirect:/dashboard/admin";
@@ -150,8 +150,14 @@ public class UserController {
             return "redirect:/dashboard?accessDenied";
         }
         user.setUserId(id);
-        userService.updateUser(user);
-        return "redirect:/users/" + id + "?updated";
+        if (loggedInUser.getRole() != UserRole.ADMIN) {
+            user.setRole(loggedInUser.getRole());
+        }
+        User updated = userService.updateUser(user);
+        if (loggedInUser.getUserId().equals(id)) {
+            session.setAttribute("loggedInUser", updated);
+        }
+        return "redirect:/users/" + updated.getUserId() + "?updated";
     }
 
     // Delete user (ADMIN only)

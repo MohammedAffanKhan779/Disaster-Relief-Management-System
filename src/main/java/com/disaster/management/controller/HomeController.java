@@ -2,7 +2,7 @@ package com.disaster.management.controller;
 
 import com.disaster.management.model.entity.User;
 import com.disaster.management.model.enums.UserRole;
-import com.disaster.management.service.*;
+import com.disaster.management.patterns.facade.DashboardFacade;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,16 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
 
     @Autowired
-    private DisasterEventService disasterEventService;
-    
-    @Autowired
-    private DonationService donationService;
-    
-    @Autowired
-    private ReliefCenterService reliefCenterService;
-    
-    @Autowired
-    private UserService userService;
+    private DashboardFacade dashboardFacade;
 
     @GetMapping("/")
     public String home(HttpSession session) {
@@ -66,12 +57,7 @@ public class HomeController {
             return "redirect:/dashboard?accessDenied";
         }
         
-        model.addAttribute("loggedInUser", loggedInUser);
-        model.addAttribute("dashboardType", "admin");
-        model.addAttribute("disasterCount", disasterEventService.getAllDisasterEvents().size());
-        model.addAttribute("donationCount", donationService.getAllDonations().size());
-        model.addAttribute("centerCount", reliefCenterService.getAllReliefCenters().size());
-        model.addAttribute("userCount", userService.getAllUsers().size());
+        dashboardFacade.populateAdminDashboard(model, loggedInUser);
         return "dashboard";
     }
 
@@ -85,10 +71,7 @@ public class HomeController {
             return "redirect:/dashboard?accessDenied";
         }
         
-        model.addAttribute("loggedInUser", loggedInUser);
-        model.addAttribute("dashboardType", "donor");
-        model.addAttribute("donationCount", donationService.getAllDonations().size());
-        model.addAttribute("disasterCount", disasterEventService.getAllDisasterEvents().size());
+        dashboardFacade.populateDonorDashboard(model, loggedInUser);
         return "dashboard";
     }
 
@@ -102,10 +85,7 @@ public class HomeController {
             return "redirect:/dashboard?accessDenied";
         }
         
-        model.addAttribute("loggedInUser", loggedInUser);
-        model.addAttribute("dashboardType", "volunteer");
-        model.addAttribute("disasterCount", disasterEventService.getAllDisasterEvents().size());
-        model.addAttribute("centerCount", reliefCenterService.getAllReliefCenters().size());
+        dashboardFacade.populateVolunteerDashboard(model, loggedInUser);
         return "dashboard";
     }
 
@@ -119,10 +99,7 @@ public class HomeController {
             return "redirect:/dashboard?accessDenied";
         }
         
-        model.addAttribute("loggedInUser", loggedInUser);
-        model.addAttribute("dashboardType", "staff");
-        model.addAttribute("disasterCount", disasterEventService.getAllDisasterEvents().size());
-        model.addAttribute("centerCount", reliefCenterService.getAllReliefCenters().size());
+        dashboardFacade.populateStaffDashboard(model, loggedInUser);
         return "dashboard";
     }
 
@@ -136,11 +113,7 @@ public class HomeController {
             return "redirect:/dashboard?accessDenied";
         }
         
-        model.addAttribute("loggedInUser", loggedInUser);
-        model.addAttribute("dashboardType", "authority");
-        model.addAttribute("disasterCount", disasterEventService.getAllDisasterEvents().size());
-        model.addAttribute("donationCount", donationService.getAllDonations().size());
-        model.addAttribute("centerCount", reliefCenterService.getAllReliefCenters().size());
+        dashboardFacade.populateAuthorityDashboard(model, loggedInUser);
         return "dashboard";
     }
 

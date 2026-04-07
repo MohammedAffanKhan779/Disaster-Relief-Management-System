@@ -7,6 +7,7 @@ import com.disaster.management.model.entity.Resource;
 import com.disaster.management.model.entity.ResourceRequest;
 import com.disaster.management.model.enums.AllocationStatus;
 import com.disaster.management.model.enums.RequestStatus;
+import com.disaster.management.patterns.builder.AllocationBuilder;
 import com.disaster.management.repository.AllocationRepository;
 import com.disaster.management.repository.ResourceRequestRepository;
 import com.disaster.management.service.ResourceRequestService;
@@ -68,14 +69,15 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
         request.approveRequest();
 
         // Create allocation automatically and link it to the request
-        Allocation allocation = new Allocation();
-        allocation.setAllocationDate(LocalDate.now());
-        allocation.setStatus(AllocationStatus.SCHEDULED);
-        allocation.setResource(request.getResource());
-        allocation.setReliefCenter(request.getReliefCenter());
-        allocation.setAllocatedQuantity(request.getRequestedQuantity());
-        allocation.setResourceRequest(request);
-        allocation.setNotes("Auto-created from approved request #" + requestId);
+        Allocation allocation = new AllocationBuilder()
+                .withAllocationDate(LocalDate.now())
+                .withStatus(AllocationStatus.SCHEDULED)
+                .withResource(request.getResource())
+                .withReliefCenter(request.getReliefCenter())
+                .withAllocatedQuantity(request.getRequestedQuantity())
+                .withResourceRequest(request)
+                .withNotes("Auto-created from approved request #" + requestId)
+                .build();
         allocation.allocateResource();
         allocationRepository.save(allocation);
 

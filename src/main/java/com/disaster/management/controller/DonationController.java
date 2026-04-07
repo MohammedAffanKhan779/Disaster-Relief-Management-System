@@ -1,6 +1,7 @@
 package com.disaster.management.controller;
 
 import com.disaster.management.model.entity.Donation;
+import com.disaster.management.model.entity.Donor;
 import com.disaster.management.model.entity.User;
 import com.disaster.management.model.enums.DonationType;
 import com.disaster.management.model.enums.PaymentMethod;
@@ -47,8 +48,8 @@ public class DonationController {
         if (loggedInUser == null) {
             return "redirect:/users/login";
         }
-        // Only DONOR and ADMIN can create donations
-        if (loggedInUser.getRole() != UserRole.DONOR && loggedInUser.getRole() != UserRole.ADMIN) {
+        // Only DONOR can create donations
+        if (loggedInUser.getRole() != UserRole.DONOR) {
             return "redirect:/dashboard?accessDenied";
         }
         model.addAttribute("donation", new Donation());
@@ -65,9 +66,10 @@ public class DonationController {
         if (loggedInUser == null) {
             return "redirect:/users/login";
         }
-        if (loggedInUser.getRole() != UserRole.DONOR && loggedInUser.getRole() != UserRole.ADMIN) {
+        if (loggedInUser.getRole() != UserRole.DONOR) {
             return "redirect:/dashboard?accessDenied";
         }
+        donation.setDonor((Donor) loggedInUser);
         donationService.saveDonation(donation);
         return "redirect:/donations?success";
     }
@@ -103,7 +105,12 @@ public class DonationController {
 
     @PostMapping("/api")
     @ResponseBody
-    public ResponseEntity<Donation> createDonationAPI(@RequestBody Donation donation) {
+    public ResponseEntity<Donation> createDonationAPI(@RequestBody Donation donation, HttpSession session) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser == null || loggedInUser.getRole() != UserRole.DONOR) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        donation.setDonor((Donor) loggedInUser);
         Donation saved = donationService.saveDonation(donation);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }

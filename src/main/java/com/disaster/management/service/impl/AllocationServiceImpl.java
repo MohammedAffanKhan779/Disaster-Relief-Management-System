@@ -42,6 +42,20 @@ public class AllocationServiceImpl implements AllocationService {
         if (allocation.getStatus() == null) {
             allocation.setStatus(AllocationStatus.SCHEDULED);
         }
+
+        // Validate and deduct stock before saving
+        Resource resource = allocation.getResource();
+        Integer requested = allocation.getAllocatedQuantity();
+        if (resource == null || requested == null || requested <= 0) {
+            throw new IllegalArgumentException("Invalid resource or quantity for allocation");
+        }
+        if (resource.getQuantity() < requested) {
+            throw new IllegalStateException(
+                    "Insufficient stock: available=" + resource.getQuantity() + ", requested=" + requested);
+        }
+        resource.setQuantity(resource.getQuantity() - requested);
+        resourceRepository.save(resource);
+
         allocation.allocateResource(); // Call entity business method
         return allocationRepository.save(allocation);
     }
@@ -77,7 +91,7 @@ public class AllocationServiceImpl implements AllocationService {
      */
     private boolean isValidTransition(AllocationStatus from, AllocationStatus to) {
         if (from == null) return true;
-        
+
         return switch (from) {
             case SCHEDULED -> to == AllocationStatus.IN_TRANSIT || to == AllocationStatus.CANCELLED;
             case IN_TRANSIT -> to == AllocationStatus.DELIVERED;
@@ -94,7 +108,7 @@ public class AllocationServiceImpl implements AllocationService {
         Integer quantity = allocation.getAllocatedQuantity();
 
         // Check if the resource is already at this center
-        if (resource.getReliefCenter() != null && 
+        if (resource.getReliefCenter() != null &&
             resource.getReliefCenter().getCenterId().equals(targetCenter.getCenterId())) {
             // Same center - increase quantity
             resource.setQuantity(resource.getQuantity() + quantity);
@@ -103,7 +117,7 @@ public class AllocationServiceImpl implements AllocationService {
             // The source would have already reduced its inventory when allocation was created
             resource.setQuantity(resource.getQuantity() + quantity);
         }
-        
+
         resource.setReliefCenter(targetCenter);
         resource.updateQuantity(resource.getQuantity());
         resourceRepository.save(resource);

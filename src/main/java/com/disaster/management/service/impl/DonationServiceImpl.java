@@ -32,12 +32,13 @@ public class DonationServiceImpl implements DonationService {
 
     @Override
     public Donation saveDonation(Donation donation) {
-        // Process the donation (generates receipt)
-        donation.processDonation();
+        // Save first so the ID is assigned, then process (generates receipt with valid ID)
         Donation savedDonation = donationRepository.save(donation);
+        savedDonation.processDonation();
+        savedDonation = donationRepository.save(savedDonation);
 
         // If donation is material (not money), update resource inventory
-        if (donation.getType() != null && donation.getType() != DonationType.MONEY) {
+        if (savedDonation.getType() != null && savedDonation.getType() != DonationType.MONEY) {
             updateResourceFromDonation(savedDonation);
         }
 
@@ -51,7 +52,7 @@ public class DonationServiceImpl implements DonationService {
      */
     private void updateResourceFromDonation(Donation donation) {
         DonationType type = donation.getType();
-        
+
         // Determine resource name based on donation type
         String resourceName = type.name() + " Supplies";
         if (donation.getDescription() != null && !donation.getDescription().isEmpty()) {

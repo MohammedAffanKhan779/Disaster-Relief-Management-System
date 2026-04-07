@@ -56,7 +56,7 @@
             <!-- Form Card -->
             <div class="bg-white rounded-2xl shadow-lg p-8">
                 <form th:action="@{/users/{id}(id=${user.userId})}" th:object="${user}" method="post" class="space-y-6">
-                    
+
                     <!-- Full Name -->
                     <div>
                         <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
@@ -86,8 +86,8 @@
                         <p class="text-sm text-gray-500 mt-1">Leave current password or enter a new one</p>
                     </div>
 
-                    <!-- Role -->
-                    <div>
+                    <!-- Role (admin-only) -->
+                    <div th:if="${loggedInUser.role.name() == 'ADMIN'}">
                         <label for="role" class="block text-sm font-semibold text-gray-700 mb-2">Role</label>
                         <select id="role" th:field="*{role}" required
                                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white">
@@ -95,17 +95,18 @@
                             <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
                         </select>
                     </div>
+                    <input th:if="${loggedInUser.role.name() != 'ADMIN'}" type="hidden" th:field="*{role}" />
 
                     <!-- Form Actions -->
                     <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                        <button type="submit" 
+                        <button type="submit"
                                 class="flex-1 px-6 py-3 bg-purple-500 text-white font-semibold rounded-xl hover:bg-purple-600 transform hover:scale-[1.02] transition-all duration-200 shadow-md flex items-center justify-center">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
                             Update Profile
                         </button>
-                        <a th:href="@{/users/{id}(id=${user.userId})}" 
+                        <a th:href="@{/users/{id}(id=${user.userId})}"
                            class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-200 text-center">Cancel</a>
                     </div>
                 </form>
